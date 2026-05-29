@@ -8,6 +8,7 @@ import time
 start_time = time.time()
 found = False
 
+#Validate command line arguments
 if len(sys.argv) !=4 :
     print("Usage: python3 scanner.py <TARGET> <START_PORT> <END_PORT>")
     sys.exit()
@@ -30,6 +31,7 @@ if start_port>end_port:
     print("Error: START_PORT cannot be greater than END_PORT")
     sys.exit()
 
+#Resolve target to IP address
 try :
     address = socket.gethostbyname(target)
 
@@ -48,6 +50,7 @@ def scan_port(port):
     global found
     s = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
     s.settimeout(1)
+    #Attempt TCP connection to port
     result = s.connect_ex((address,port))
 
     if result == 0:
@@ -56,6 +59,7 @@ def scan_port(port):
 
     s.close()
 
+#Multi threaded port scanning
 with ThreadPoolExecutor(max_workers=200) as executor:
     list(executor.map(scan_port,range(start_port,end_port+1)))
 
